@@ -205,34 +205,10 @@
 
 
 
-
-
-<div class="container post-index">
-
-  
-
-<div class="post">
-  <h1 class="article-title">
-    <span>相册</span>
-  </h1>
-  <div class="article-top-meta">
-    <span>
-      发布 : 
-      2019-01-27
-    </span>
-    
-    
-      <span>
-        浏览 : <span class="article-timer" data-identity="photos"></span>
-      </span>
-    
-  </div>
-
-  
-
-  <div class="article-content">
-    <div class="markdown-body">
-      <link rel="stylesheet" href="./ins.css">
+    <div class="container about-index">
+      <!-- 会去找到index.ejs -->
+      <div class="markdown-body">
+          <link rel="stylesheet" href="./ins.css">
 <link rel="stylesheet" href="./photoswipe.css">
 <link rel="stylesheet" href="./default-skin.css">
 <!-- Root element of PhotoSwipe. Must have class pswp. -->
@@ -301,7 +277,7 @@
 
 <div class="photos-btn-wrap">
 	<a class="photos-btn active" href="javascript:void(0)" target="_blank" rel="noopener">相册</a>
-	<a class="photos-btn" href="#">待续</a>
+	<a class="photos-btn" href="javascript:void(0)" target="_blank" rel="noopener">待续</a>
 </div>
 <div class="instagram itemscope">
 	<a href="https://www.instagram.com/lawlitewang20/" target="_blank" class="open-ins">图片正在加载中…</a>
@@ -322,95 +298,10 @@
 </script>
 
 
-    </div>
-  </div>
-  
-    <div class="copy-right">
-      <div class="markdown-body">
-        <blockquote>
-        
-        
-          本文作者 : KYRIECAO <br>
-        
-        原文链接 : <a href="">http://yoursite.com/photos/index.html</a><br>
-        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
-        </blockquote>
       </div>
-    </div>
-  
-  
-  
-    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
-  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
-</div>
-<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
-  
 
-  
-    <div id="reward">
-  
-    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
-  
-  <button id="reward-btn">
-    
-    <span>投食</span>
-  </button>
-  <div id="reward-qrcode">
-    
-      <div class="reward-qrcode--container">
-        <img class="qrcode-img" src="/images/wechat.png" alt="微信扫一扫, 向我投食">
-        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
-      </div>
-    
-      <div class="reward-qrcode--container">
-        <img class="qrcode-img" src="/images/alipay.png" alt="支付宝扫一扫, 向我投食">
-        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
-      </div>
-    
-  </div>
-
-</div>
-
-<script>
-  (() => {
-    let button = document.querySelector('#reward-btn'),
-      qrcode = document.querySelector('#reward-qrcode'),
-      display = false;
-    
-    button.addEventListener('click', () => {
-      qrcode.style.display = display ? 'none' : 'block'
-      display = !display
-    }, false)
-  })()
-</script>
-  
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-      <span>
-        
-      </span>
-    </div>
-    <div class="article-meta pull-right">
-    </div>
-  </div>
-</div>
-
-
-  <aside id="sidebar">
-    <p id="sidebar-header"></p>
-    <ol id="sidebar-toc"></ol>
-  </aside>
-  <script async>setTimeout(generateToc, 10);</script>
-
-
-  <nav class="post-navigation">
-    
-    
-  </nav>
-
-  
-    <a href="#comment" class="comment-anchor"></a>
+      
+        <a href="#comment" class="comment-anchor"></a>
 <div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
 <div id="vcomments"></div>
 
@@ -429,138 +320,10 @@
     });
   }
 </script>
-   
+       
+    </div>
 
-  
-    <script defer>
-const valineAPI = (() => {
-  try {
-    AV.init("Mf7CGzCge7nG4SidKEJA5l15-gzGzoHsz", "GUOthCB7bTfztCk41bvbP4Pl");
-  } catch(error) {}
-  const isExist = (identity) => {
-    identity = identity || getRealPath();
-    let query = new AV.Query('Timer');
-    return new Promise((resolve, reject) => {
-      query.equalTo("identity", identity);
-      query.find().then(results => {
-        resolve(results.length > 0);
-      }, error => reject(error));
-    })
-  }
 
-  const _get = (identity) => {
-    let query = null;
-    if(identity && identity instanceof Array){
-      let querys = [];
-      for(let i = 0; i < identity.length; ++i) {
-        querys[i] = new AV.Query('Timer');
-        querys[i].equalTo('identity', identity[i]);
-      }
-      query = AV.Query.or.apply(null ,querys);
-    } else {
-      identity = identity || getRealPath();
-      query = new AV.Query("Timer");
-      query.equalTo("identity", identity);
-    }
-
-    return new Promise((resolve, reject) => {
-      query.find()
-      .then(results => resolve(results))
-      .catch(error => reject(error))
-    })
-  }
-
-  const create = (identity) => {
-    identity = identity || getRealPath();
-    return new Promise((resolve, reject) => {
-      let Todo = AV.Object.extend('Timer');
-      let todo = new Todo();
-      todo.set("times", 1);
-      todo.set("identity", identity);
-      todo.save().then(res => resolve(true), error => reject(error));
-    })
-  }
-
-  const update = (identity) => {
-    identity = identity || getRealPath();
-    return new Promise((resolve, reject) => {
-      let query = new AV.Query('Timer');
-      query.equalTo("identity", identity);
-      query.find().then(todos => {
-        todos.forEach(todo => {
-          todo.set("times", todo.attributes.times + 1);
-        });
-        return AV.Object.saveAll(todos);
-      }).then(todos => resolve(true), error => reject(error));
-    })
-  }
-
-  return {
-    isExist,
-    _get,
-    update,
-    create
-  }
-})()
-
-const calcAndWriteTimes = () => {
-  let isPost = false;
-
-  let timerAllDOM = document.querySelectorAll(".article-timer");
-
-  if(isPost) {
-    let identity = timerAllDOM[0].getAttribute("data-identity");
-    valineAPI.isExist(identity)
-    .then(exist => {
-      if(exist) {
-        return valineAPI.update(identity);
-      }
-      return new Promise(resolve => resolve(true));
-    })
-    .then( succuess => valineAPI._get(identity))
-    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
-    .catch(error => console.log(error.message))
-    return ;
-  }
-
-  let timerDOMCache = {};
-
-  for(let timerDOM of timerAllDOM) {
-    let identity = timerDOM.getAttribute("data-identity");
-    if(timerDOMCache.hasOwnProperty(identity)){
-      timerDOMCache[identity].dom.push(timerDOM);
-    }else{
-      timerDOMCache[identity] = {
-        dom: [timerDOM],
-        times: undefined
-      };
-    }
-  }
-
-  let identities = Object.keys(timerDOMCache);
-  valineAPI._get(identities).then(results => {
-    for(let result of results) {
-      let {identity, times} = result.attributes;
-      timerDOMCache[identity].times = times;
-      timerDOMCache[identity].dom.map(item => item.innerText = times);
-    }
-    for(let identity of identities) {
-      if(timerDOMCache[identity].times){
-        continue;
-      }
-      timerDOMCache[identity].dom.map(item => item.innerText = 1);
-      valineAPI.create(identity);
-    }
-  }).catch(error => console.log(error.message))
-}
-
-if(true){
-  calcAndWriteTimes();
-}
-</script>
-   
-
-</div>
 
 
       <footer>

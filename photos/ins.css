@@ -11,10 +11,12 @@
 .instagram img {
     width: 100%;
     border: 1px solid #eee;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 .instagram .year {
-	font-size: 16px;
+    font-size: 17px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 .instagram .open-ins{
 	padding: 10px 0;
@@ -23,13 +25,10 @@
 .instagram .open-ins:hover{
 	color: #657b83;
 }
-.instagram .year{
-	display: inline;
-}
 .instagram .thumb {
 	width: 25%;
 	height: 0; 
-	padding-bottom: 25%;
+	padding-bottom: 23%;
 	position: relative;
 	display: inline-block;
 	text-align: center;
@@ -49,7 +48,9 @@
 	flex-wrap: wrap;
 	clear: both;
 	width: 100%;
-	text-align: left;
+    text-align: left;
+    padding-left: 0px;
+    margin-bottom: 0px;
 }
 .instagram .album li{
 	list-style: none;
@@ -116,11 +117,14 @@
 	border-bottom: 1px solid #e5e5e5;
 	margin-bottom: 20px;
 }
+.photos-btn-wrap .photos-btn {
+    border: none;
+}
 .photos-btn {
 	font-size: 16px;
 	color: #333;
 	margin-bottom: -4px;
-	padding: 5px 8px 3px;
+    padding: 5px 70px 3px;
 }
 .photos-btn.active {
 	color: #08c;
