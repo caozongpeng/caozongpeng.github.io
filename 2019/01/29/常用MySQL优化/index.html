@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="KyrieCao, kyriecao@163.com">
+  
+  
+  
+  <title>常用MySQL优化 | KyrieCao的个人网站</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="MySQL,MySQL,">
+  
+
+  <script>
+    console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+<script src="/js/clicklove.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">KYRIECAO.com</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/photos/">
+          
+            <a href="/photos/" target="_self">
+              相册
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else="">抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://caozongpeng.github.io/atom.xml" target="_blank">
+                    RSS 订阅
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://github.com/caozongpeng" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://blog.csdn.net/qq_22067469" target="_blank">
+                    CSDN
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://hacknical.com/caozongpeng/resume?locale=zh" target="_blank">
+                    Resume
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>常用MySQL优化</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-01-29
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/MySQL/">
+            MySQL
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="常用MySQL优化"></span>
+      </span>
+    
+  </div>
+
+  
+    <div id="常用MySQL优化" style="margin: 4rem 2px"></div>
+<script async>
+  (function(){
+    let playerTimer = setInterval(function(){
+      if(!window.APlayer){
+        return
+      }
+
+      new APlayer({
+        container: document.getElementById('常用MySQL优化'),
+        theme: '#e96900',
+        listFolded: false,
+        audio: [{"name":"一晃就老了","artist":"秋裤大叔","url":"//music.163.com/song/media/outer/url?id=507364215.mp3","cover":"//p2.music.126.net/2ltdRjVKuXBqU25H0kPrBg==/109951163028212350.jpg?param=130y130"},{"name":"容易受伤的女人","artist":"王菲","url":"//music.163.com/song/media/outer/url?id=25769491.mp3","cover":"//p1.music.126.net/TBmMgJgQT5-t8eFn3mfA9g==/109951163351870374.jpg?param=130y130"}]
+      });
+      
+      clearInterval(playerTimer)
+    }, 10);
+  })()
+</script>
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p></p>
+<h3 id="1、SQL语句中IN包含的值不应过多"><a href="#1、SQL语句中IN包含的值不应过多" class="headerlink" title="1、SQL语句中IN包含的值不应过多"></a>1、SQL语句中<code>IN</code>包含的值不应过多</h3><p>MySQL对于IN做了相应的优化，即将IN中的常量全部存储在一个数组里面，而且这个数组是排好序的。但是如果数值较多，产生的消耗也是比较大的。<br><strong>比如</strong>：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span> <span class="keyword">FROM</span> t_test <span class="keyword">WHERE</span> <span class="keyword">id</span> <span class="keyword">IN</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br></pre></td></tr></table></figure></p>
+<p>对于这种连续的数值，能用<code>BETWEEN</code>就不要用<code>IN</code>，再或者使用连接来替换。</p>
+<h3 id="2、SELECT语句务必指明字段名称"><a href="#2、SELECT语句务必指明字段名称" class="headerlink" title="2、SELECT语句务必指明字段名称"></a>2、<code>SELECT</code>语句务必指明字段名称</h3><p><code>SELECT *</code> 增加很多不必要的消耗(CPU、IO、内存、网络带宽)增加了使用覆盖索引的可能性，当表结构发生改变时，字段也需要更新。所以要求直接在<code>SELECT</code>后面接上字段名。</p>
+<h3 id="3、当只需要一条数据的时候，使用-LIMIT-1"><a href="#3、当只需要一条数据的时候，使用-LIMIT-1" class="headerlink" title="3、当只需要一条数据的时候，使用 LIMIT 1"></a>3、当只需要一条数据的时候，使用 <code>LIMIT 1</code></h3><p>这是为了使用<code>EXPLAIN</code>中<code>type</code>列达到<code>const</code>类型</p>
+<h3 id="4、如果排序字段没有用到索引，尽量少排序"><a href="#4、如果排序字段没有用到索引，尽量少排序" class="headerlink" title="4、如果排序字段没有用到索引，尽量少排序"></a>4、如果排序字段没有用到索引，尽量少排序</h3><h3 id="5、如果限制条件中其他字段没有索引，尽量少用-OR"><a href="#5、如果限制条件中其他字段没有索引，尽量少用-OR" class="headerlink" title="5、如果限制条件中其他字段没有索引，尽量少用 OR"></a>5、如果限制条件中其他字段没有索引，尽量少用 <code>OR</code></h3><p><code>OR</code>两边的字段中，如果有一个不是索引字段，而其他条件也不是索引字段，会造成该查询不走索引的情况。很多时候使用 <code>UNION ALL</code>或者是<code>UNION</code>（必要的时候）的方式来代替<code>OR</code>会得到更好的效果。</p>
+<h3 id="6、尽量用-UNION-ALL-代替-UNION"><a href="#6、尽量用-UNION-ALL-代替-UNION" class="headerlink" title="6、尽量用 UNION ALL 代替 UNION"></a>6、尽量用 <code>UNION ALL</code> 代替 <code>UNION</code></h3><p><code>UNION</code>和<code>UNION ALL</code>的差异主要是前者需要将结果集合并后再进行唯一性过滤操作，这就会涉及到排序，增加大量的CPU运算，加大资源消耗及延迟。当然，<code>UNION ALL</code>的前提条件是两个结果集没有重复数据。</p>
+<h3 id="7、不使用-ORDER-BY-RAND"><a href="#7、不使用-ORDER-BY-RAND" class="headerlink" title="7、不使用 ORDER BY RAND()"></a>7、不使用 <code>ORDER BY RAND()</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span> <span class="keyword">FROM</span> t_test <span class="keyword">ORDER</span> <span class="keyword">BY</span> <span class="keyword">RAND</span>() <span class="keyword">LIMIT</span> <span class="number">1000</span>;</span><br><span class="line">优化为</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span> <span class="keyword">FROM</span> t_test t1 <span class="keyword">JOIN</span> (<span class="keyword">SELECT</span> <span class="keyword">RAND</span>()* (<span class="keyword">SELECT</span> <span class="keyword">MAX</span>(<span class="keyword">id</span>) t_test) <span class="keyword">AS</span> nid) t2 <span class="keyword">ON</span> t1.id &gt; t2.nid <span class="keyword">LIMIT</span> <span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="8、区分-IN-和-EXISTS、NOT-IN-和-NOT-EXISTS"><a href="#8、区分-IN-和-EXISTS、NOT-IN-和-NOT-EXISTS" class="headerlink" title="8、区分 IN 和 EXISTS、NOT IN 和 NOT EXISTS"></a>8、区分 <code>IN</code> 和 <code>EXISTS</code>、<code>NOT IN</code> 和 <code>NOT EXISTS</code></h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> 表A <span class="keyword">WHERE</span> <span class="keyword">id</span> <span class="keyword">IN</span>(<span class="keyword">SELECT</span> <span class="keyword">id</span> <span class="keyword">FROM</span> 表B)</span><br></pre></td></tr></table></figure>
+<p>上面SQL语名相当于<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> 表A <span class="keyword">WHERE</span> <span class="keyword">EXISTS</span>(<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> 表B <span class="keyword">WHERE</span> 表B.id = 表A.id)</span><br></pre></td></tr></table></figure></p>
+<p>区分 <code>IN</code> 和 <code>EXISTS</code> 主要是造成了驱动顺序的改变（这是性能变化的关键），如果是 <code>EXISTS</code>，那么以外层表为驱动表，先被访问，如果是 <code>IN</code> ，那么先执行子查询。所以 <code>IN</code> 适合于外表大而内表小的情况，<code>EXISTS</code> 适合于外表小而内表大的情况。</p>
+<p>关于 <code>NOT IN</code> 和 <code>NOT EXISTS</code>，推荐使用 <code>NOT EXISTS</code>，不仅仅是效率问题，<code>NOT IN</code> 可能存在逻辑问题。</p>
+<p>高效写出一个替代 NOT EXISTS 的SQL语句。</p>
+<p>原SQL语句<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> colname.... <span class="keyword">FROM</span> 表A <span class="keyword">WHERE</span> a.id <span class="keyword">NOT</span> <span class="keyword">IN</span>(<span class="keyword">SELECT</span> b.id <span class="keyword">FROM</span> 表B)</span><br></pre></td></tr></table></figure></p>
+<p>优化SQL语句<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> colname.... <span class="keyword">FROM</span> 表A <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> 表B <span class="keyword">ON</span> <span class="keyword">WHERE</span> a.id = b.id <span class="keyword">WHERE</span> b.id <span class="keyword">IS</span> <span class="literal">NULL</span></span><br></pre></td></tr></table></figure></p>
+<p>表A不在表B中的数据</p>
+<h3 id="9、使用合理的分布方式以提高分布的效率"><a href="#9、使用合理的分布方式以提高分布的效率" class="headerlink" title="9、使用合理的分布方式以提高分布的效率"></a>9、使用合理的分布方式以提高分布的效率</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,<span class="keyword">name</span>,age <span class="keyword">FROM</span> preson <span class="keyword">LIMIT</span> <span class="number">866331</span>, <span class="number">20</span></span><br></pre></td></tr></table></figure>
+<p>使用上述SQL语句做分页的时候，可能有人会发现，随着表数据量的增加，直接使用<code>LIMIT</code>分页查询会越来越慢。</p>
+<p>优化的方法如下：可以取前一页的最大行数的id，然后根据这个最大的id来限制下一页的起点。比如此列中，上一页最大的id是866331。SQL可以采用如下的写法：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,<span class="keyword">name</span>,age <span class="keyword">FROM</span> preson <span class="keyword">WHERE</span> <span class="keyword">id</span> &gt; <span class="number">866331</span> <span class="keyword">LIMIT</span> <span class="number">20</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="10、避免在-WHERE-子句中对字段进行-NULL-值判断"><a href="#10、避免在-WHERE-子句中对字段进行-NULL-值判断" class="headerlink" title="10、避免在 WHERE 子句中对字段进行 NULL 值判断"></a>10、避免在 <code>WHERE</code> 子句中对字段进行 <code>NULL</code> 值判断</h3><p>对于 <code>NULL</code> 的判断会导致引擎放弃使用索引而进行全表扫描。</p>
+<h3 id="11、不建议使用-前缀模糊查询"><a href="#11、不建议使用-前缀模糊查询" class="headerlink" title="11、不建议使用 % 前缀模糊查询"></a>11、不建议使用 <code>%</code> 前缀模糊查询</h3><p>例如 <code>LIKE &quot;%name&quot;</code> 或者 <code>LIKE &quot;%name%&quot;</code>，这种查询会导致索引失效而进行全表扫描。但是可以使用 <code>LIKE &quot;name%&quot;</code>。</p>
+<p>如何查询 <code>%name%</code></p>
+<p>创建全文索引SQL语法<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> <span class="string">`t_test`</span> <span class="keyword">ADD</span> FULLTEXT <span class="keyword">INDEX</span> <span class="string">`idx_user_name`</span>(<span class="string">`user_name`</span>);</span><br></pre></td></tr></table></figure></p>
+<p>使用全文索引SQL语句<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,<span class="keyword">name</span>,age <span class="keyword">FROM</span> t_test <span class="keyword">WHERE</span> <span class="keyword">MATCH</span>(user_name) AGAINST(<span class="string">"张三"</span> <span class="keyword">IN</span> <span class="built_in">BOOLEAN</span> <span class="keyword">mode</span>);</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意</strong>：在需要创建全文索引之前，请联系DBA确定能否创建，同 时需要注意的是查询语句的写法与普通索引的区别。</p>
+<h3 id="12、避免在-WHERE-子句中对字段进行表达式操作"><a href="#12、避免在-WHERE-子句中对字段进行表达式操作" class="headerlink" title="12、避免在 WHERE 子句中对字段进行表达式操作"></a>12、避免在 WHERE 子句中对字段进行表达式操作</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">FROM</span> t_test <span class="keyword">WHERE</span> age * <span class="number">22</span> = <span class="number">36</span>;</span><br></pre></td></tr></table></figure>
+<p>对字段运行了算术运算，会造成引擎放弃使用索引，建议改成<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">FROM</span> t_test <span class="keyword">WHERE</span> age = <span class="number">36</span> / <span class="number">2</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="13、避免隐匿类型转换"><a href="#13、避免隐匿类型转换" class="headerlink" title="13、避免隐匿类型转换"></a>13、避免隐匿类型转换</h3><p><code>WHERE</code> 子句中出现 <code>COLUMN</code> 字段的类型和传入的参数类型不一致的时候发生的类型转换，建议先确定<code>WHERE</code> 中的参数类型。</p>
+<h3 id="14、对于联合索引来说，要遵守最左前缀法则。"><a href="#14、对于联合索引来说，要遵守最左前缀法则。" class="headerlink" title="14、对于联合索引来说，要遵守最左前缀法则。"></a>14、对于联合索引来说，要遵守最左前缀法则。</h3><p>举列来说索引含有字段id、name、school，可以直接用id字段，也可以id、name这样的顺序，但是name;school都无法使用这个索引。所以在创建联合索引的时候一定要注意索引字段顺序，常用的查询字段放在最前面。</p>
+<h3 id="15、必要时可以使用-FORCE-INDEX-来强制查询出某个索引"><a href="#15、必要时可以使用-FORCE-INDEX-来强制查询出某个索引" class="headerlink" title="15、必要时可以使用 FORCE INDEX 来强制查询出某个索引"></a>15、必要时可以使用 <code>FORCE INDEX</code> 来强制查询出某个索引</h3><p>有的时候MySQL优化器采取它认为合适的索引来检索SQL语句，但是可能它所采用的索引并不是我们想要的。这时就可以采用<code>FORCE INDEX</code>来强制优化器使用我们制定的索引。</p>
+<h3 id="16、注意范围查询语句"><a href="#16、注意范围查询语句" class="headerlink" title="16、注意范围查询语句"></a>16、注意范围查询语句</h3><p>对于联合索引来说，如果存在范围查询，比如 <code>BETWEEN</code>、<code>&gt;</code> 、<code>&lt;</code> 等条件时，会造成后面的索引字段失效。</p>
+<h3 id="17、关于-JOIN优化"><a href="#17、关于-JOIN优化" class="headerlink" title="17、关于 JOIN优化"></a>17、关于 <code>JOIN</code>优化</h3><p><code>LEFT JOIN</code> 以左边的表为驱动表，<code>INNER JOIN</code> 自动找出那个数据少的表作为驱动表，<code>RIGHT JOIN</code> 以右表为驱动表。</p>
+<p>1、<strong>MySQL中淌有 <code>FULL JOIN</code>，可以用以下方式来解决</strong><br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> A <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> B <span class="keyword">on</span> B.name = A.name <span class="keyword">WHERE</span> B.name <span class="keyword">is</span> <span class="literal">NULL</span> <span class="keyword">UNION</span> ALL <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> B;</span><br></pre></td></tr></table></figure></p>
+<p>2、<strong>尽量使用 <code>INNER JOIN</code>，避免 <code>LEFT JOIN</code></strong><br>参与联合查询的表至少为2张表，一般都存在大小之分。如果连接方式是<code>INNER JOIN</code>，在没有其他过滤条件的情况下MySQL会自动选择小表作为驱动表，但是<code>LEFT JOIN</code>在驱动表的选择上遵循的是左边驱动右边驱动的原则，即<code>LEFT JOIN</code>左边的表名为驱动表。<br>3、<strong>合理利用索引</strong><br>被驱动表的索引字段作为 ON 的限制字段。<br>4、<strong>利用小表去驱动多大表</strong><br>这样可以减少嵌套循环中的循环次数，以减少IO总量及CPU运算的次数。</p>
+<p>5、<strong>巧用STRAIGHT_JOIN</strong><br><code>INNER JOIN</code>是由MySQL选择驱动表，但是有些特殊情况需要选择另个表作为驱动表，比如有<code>GROUP BY</code>、<code>ORDER BY</code>等<code>「Using filesort」</code>、<code>「Using temporary」</code>时。<code>STRAIGHT_JOIN</code>来强制连接顺序，在<code>STRAIGHT_JOIN</code>左边的表名就是驱动表，右边则是被驱动表。在使用<code>STRAIGHT_JOIN</code>有个前提条件是该查询是内连接，也就是<code>INNER JOIN</code>。其他链接不推荐使用<code>STRAIGHT_JOIN</code>，否则可能造成查询结果不准确。</p>
+<h4 id="最后感谢阅读，写得不对的地方请指教。"><a href="#最后感谢阅读，写得不对的地方请指教。" class="headerlink" title="最后感谢阅读，写得不对的地方请指教。"></a>最后感谢阅读，写得不对的地方请指教。</h4>
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : KYRIECAO <br>
+        
+        原文链接 : <a href="">https://caozongpeng.github.io/2019/01/29/常用MySQL优化/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.jpg" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/MySQL/">
+              #MySQL
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2019/01/24/hello-world/" target="_self">Hello World</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Mf7CGzCge7nG4SidKEJA5l15-gzGzoHsz",
+      appKey: "GUOthCB7bTfztCk41bvbP4Pl",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Mf7CGzCge7nG4SidKEJA5l15-gzGzoHsz", "GUOthCB7bTfztCk41bvbP4Pl");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a target="_blank" href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a target="_blank" href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+    <!-- 新增 -->
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">
+        本站总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;次
+    </span>
+    <span id="busuanzi_container_site_uv">
+        总访客数&nbsp;<span id="busuanzi_value_site_uv"></span>&nbsp;人次
+    </span>
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2019, 0, 23).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>
