@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="KyrieCao, kyriecao@163.com">
+  
+  
+  
+  <title>最最最常见的Java面试题总结(二) | KyrieCao的个人网站</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="JAVA,JAVA,">
+  
+
+  <script>
+    //console.log('\n%c Hexo-theme-bmw v4.0 ' + '%c 🎉 https://github.com/dongyuanxin/theme-bmw 🎉\n' + '\n%c View demo online ' + '%c 🔍 https://godbmw.com/ 🔍  \n' , 'color: #fadfa3; background: #030307; padding:3px 0;', '', 'color: #fadfa3; background: #030307; padding:3px 0;', '');
+  </script>
+
+  
+
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+  <script src="/js/util.js"></script>
+<script src="/js/valine.min.js"></script>
+<script src="/js/clicklove.js"></script>
+
+  
+
+  
+    <link href="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/aplayer/1.10.1/APlayer.min.js" async></script>
+  
+
+  
+    <link href="https://cdn.bootcss.com/social-share.js/1.0.16/css/share.min.css" rel="stylesheet">
+  
+  
+  <script src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+  
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.0/dist/av-min.js"></script>
+  
+
+</head>
+
+  <body>
+
+    
+
+    <div id="app">
+
+      <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">KYRIECAO.com</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="/">
+          
+            <a href="/" target="_self">
+              主页
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a href="/archives/" target="_self">
+              归档
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          
+            <a href="/categories/" target="_self">
+              分类
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          
+            <a href="/tags/" target="_self">
+              标签
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          
+            <a href="/friends/" target="_self">
+              友链
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          
+            <a href="/about/" target="_self">
+              关于
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/photos/">
+          
+            <a href="/photos/" target="_self">
+              相册
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else="">抓到我</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a href="https://caozongpeng.github.io/atom.xml" target="_blank">
+                    RSS 订阅
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://github.com/caozongpeng" target="_blank">
+                    Github
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://blog.csdn.net/qq_22067469" target="_blank">
+                    CSDN
+                  </a>
+                </li>
+              
+                <li>
+                  <a href="https://hacknical.com/caozongpeng/resume?locale=zh" target="_blank">
+                    Resume
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu"),
+    iconMenuClicked = false;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+      
+
+
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>最最最常见的Java面试题总结(二)</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-02-21
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/JAVA/">
+            JAVA
+          </a>
+      </span>
+    
+    
+      <span>
+        浏览 : <span class="article-timer" data-identity="最最最常见的Java面试题总结-二"></span>
+      </span>
+    
+  </div>
+
+  
+    <div id="最最最常见的Java面试题总结-二" style="margin: 4rem 2px"></div>
+<script async>
+  (function(){
+    let playerTimer = setInterval(function(){
+      if(!window.APlayer){
+        return
+      }
+
+      new APlayer({
+        container: document.getElementById('最最最常见的Java面试题总结-二'),
+        theme: '#e96900',
+        listFolded: false,
+        audio: [{"name":"不仅仅是喜欢","artist":"阮豆","url":"http://music.163.com/song/media/outer/url?id=554530294.mp3","cover":"//p1.music.126.net/MC1p4V5eM4Us92v8DCOOtg==/109951163258247877.jpg?param=130y130"}]
+      });
+      
+      clearInterval(playerTimer)
+    }, 10);
+  })()
+</script>
+  
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p></p>
+<h3 id="一、String-和-StringBuffer、StringBuilder的区别是什么？String为什么是不可变的？"><a href="#一、String-和-StringBuffer、StringBuilder的区别是什么？String为什么是不可变的？" class="headerlink" title="一、String 和 StringBuffer、StringBuilder的区别是什么？String为什么是不可变的？"></a>一、String 和 StringBuffer、StringBuilder的区别是什么？String为什么是不可变的？</h3><h4 id="String-和-StringBuffer、StringBuilder的区别"><a href="#String-和-StringBuffer、StringBuilder的区别" class="headerlink" title="String 和 StringBuffer、StringBuilder的区别"></a>String 和 StringBuffer、StringBuilder的区别</h4><p><strong>可变性</strong><br><code>String</code> 类中使用 <code>final</code> 关键字字符数组保存字符串，<code>private final char value[]</code> ,所以 <code>String</code> 对象是不可变的。而 <code>StringBuilder</code> 与 <code>StringBuffer</code> 都继承自 <code>AbstractStringBuilder</code> 类，在 <code>AbstractStringBuilder</code> 中也是使用字符数组保存字符串 <code>char[] value</code> 但是没有用 <code>final</code> 关键字修饰， 所以这两种对象都是可变的。</p>
+<p>StringBuilder 与 StringBuffer 的构造方法都是调用父类构造方法也就是 AbstractStringBuilder 实现的，可以自行查阅源码。<br>AbstractStringBuilder.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractStringBuilder</span> <span class="keyword">implements</span> <span class="title">Appendable</span>, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] value;</span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    AbstractStringBuilder() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    AbstractStringBuilder(<span class="keyword">int</span> capacity) &#123;</span><br><span class="line">        value = <span class="keyword">new</span> <span class="keyword">char</span>[capacity];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>线程安全性</strong><br><code>String</code> 中的对象是不可变的，也就可以理解为常量，线程安全。 <code>AbstractStringBuilder</code> 是 <code>StringBuilder</code> 与 <code>StringBuffer</code> 的公共父类，定义了一些字符串的基本操作，如 <code>expandCapacity</code>、<code>append</code>、<code>insert</code>、<code>indexOf</code> 等公共方法。<code>StringBuffer</code> 对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。 <code>StringBuilder</code> 并没有对方法进行加同步锁，所以是非线程安全的。</p>
+<p><strong>性能</strong><br>每次对 <code>String</code> 类型进行改变的时候，都会生成一个新的 <code>String</code> 对象，然后将指针指向新的 <code>String</code> 对象。<br><code>StringBuffer</code> 每次都会对 <code>StringBuffer</code> 对象本身进行操作，而不是生成新的对象并改变对象引用。相同情况下使用 <code>StringBuilder</code> 相比使用 <code>StringBuffer</code> 仅能获得 10% ~ 15% 左右的性能提升，但即要冒多线程不安全的风险。</p>
+<p><strong>对于三者使用的总结：</strong><br>1、操作海量的数据 = <code>String</code><br>2、单线程操作字符串缓冲区下操作大量数据 = <code>StringBuilder</code><br>3、多线程操作字符串缓冲区下操作大量数据 = <code>StringBuffer</code></p>
+<h4 id="String-为什么是不可变的吗？"><a href="#String-为什么是不可变的吗？" class="headerlink" title="String 为什么是不可变的吗？"></a>String 为什么是不可变的吗？</h4><p>简单来说就是 <code>String</code> 类利用了 <code>final</code> 修饰的 <code>char</code> 类型数组存储字符，源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** The value is used for character storage. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br></pre></td></tr></table></figure></p>
+<h4 id="String-真的是不可变的吗？"><a href="#String-真的是不可变的吗？" class="headerlink" title="String 真的是不可变的吗？"></a>String 真的是不可变的吗？</h4><p><strong>String不可变但不代表引用不可以变</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"Hello"</span>;</span><br><span class="line">str = str + <span class="string">" World"</span>;</span><br><span class="line">System.out.println(<span class="string">"str="</span> + str);</span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str=Hello World</span><br></pre></td></tr></table></figure></p>
+<p>实际上，原来 <code>String</code> 的内容是不变的，只是str由原来指向 <code>Hello</code> 的内存地址转为指向 <code>Hello World</code> 的内存地址而已，也就是说多开辟了一块内存区域给 <code>Hello World</code> 字符串。</p>
+<p><strong>通过反射是可以修改所谓的 不可变 对象</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建字符串"Hello World"， 并赋给引用s</span></span><br><span class="line">String s = <span class="string">"Hello World"</span>;</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"s = "</span> + s); <span class="comment">// Hello World</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取String类中的value字段</span></span><br><span class="line">Field valueFieldOfString = String.class.getDeclaredField(<span class="string">"value"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 改变value属性的访问权限</span></span><br><span class="line">valueFieldOfString.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取s对象上的value属性的值</span></span><br><span class="line"><span class="keyword">char</span>[] value = (<span class="keyword">char</span>[]) valueFieldOfString.get(s);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 改变value所引用的数组中的第5个字符</span></span><br><span class="line">value[<span class="number">5</span>] = <span class="string">'_'</span>;</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"s = "</span> + s); <span class="comment">// Hello_World</span></span><br></pre></td></tr></table></figure></p>
+<p>结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = Hello World</span><br><span class="line">s = Hello_World</span><br></pre></td></tr></table></figure></p>
+<p>用反射可以访问私有成员，然后反射出 <code>String</code> 对象中的 <code>value</code> 属性，进而改变通过获得的 <code>value</code> 引用改变数组的结构。但是一般我们不会这么做。知道有这个东西就可以了。</p>
+<h3 id="什么是反射机制？反射机制的应用场景有哪些？"><a href="#什么是反射机制？反射机制的应用场景有哪些？" class="headerlink" title="什么是反射机制？反射机制的应用场景有哪些？"></a>什么是反射机制？反射机制的应用场景有哪些？</h3><h4 id="反射机制介绍"><a href="#反射机制介绍" class="headerlink" title="反射机制介绍"></a>反射机制介绍</h4><p><code>JAVA</code> 反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法，对于任意一个对象，都能够调用它的任意一个方法和属性，这种动态获取的信息以及动态调用对象的方法的功能称为 <code>JAVA</code> 语言的反射机制。</p>
+<h4 id="静态编译和动态编译"><a href="#静态编译和动态编译" class="headerlink" title="静态编译和动态编译"></a>静态编译和动态编译</h4><ul>
+<li><strong>静态编译：</strong>在编译时确定类型，绑定对象</li>
+<li><strong>动态编译：</strong>运行时确定类型，绑定对象</li>
+</ul>
+<h4 id="反射机制优缺点"><a href="#反射机制优缺点" class="headerlink" title="反射机制优缺点"></a>反射机制优缺点</h4><ul>
+<li><strong>优点：</strong> 运行期类型的判断，动态加载类，提高代码灵活度。</li>
+<li><strong>缺点：</strong> 性能瓶颈，反射相当于一系列解释操作，通知 <code>JVM</code> 要做的事情，性能比直接的 <code>JAVA</code> 代码要慢很多。</li>
+</ul>
+<h4 id="反射的应用场景"><a href="#反射的应用场景" class="headerlink" title="反射的应用场景"></a>反射的应用场景</h4><p>反射是框架设计的灵魂</p>
+<p>在我们平时的项目开发过程中，基本上很少会直接使用到反射机制，但这不能说明反射机制没有用，实际上有很多设计、开发都与反射机制有关，例如模块化的开发，通过反射去调用对应的字节码，动态代理设计模式也采用了反射机制，还有我们日常使用的 <code>Spring</code>、<code>Hibernate</code> 等框架也大量使用到了反射机制。</p>
+<p>举例：①我们在使用 <code>JDBC</code> 连接数据库时使用 <code>Class.forName()</code> 通过反射加载数据库的驱动程序。② <code>Spring</code> 框架也用到很多反射机制，最经典的就是 <code>XML</code> 的配置模式， <code>Spring</code> 通过 <code>XML</code> 配置模式装载 <code>Bean</code> 的过程：1)将程序内所有 <code>XML</code> 或 <code>Properties</code> 配置文件加载入内存中。2)<code>JAVA</code> 类里面解析 <code>XML</code> 或 <code>Properties</code> 里面的内容，得到对应实体类的字节码字符串以及相关的属性信息，3)使用反射机制，根据这个字符串获得某个类的 <code>Class</code> 实例，4)动态配置实例的属性。<br><strong>推荐阅读：</strong></p>
+<ul>
+<li><a href="https://segmentfault.com/a/1190000010162647?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="noopener">Reflection：Java反射机制的应用场景</a></li>
+<li><a href="https://blog.csdn.net/sinat_38259539/article/details/71799078" target="_blank" rel="noopener">Java基础之—反射（非常重要）</a></li>
+</ul>
+<h3 id="什么是-JDK？-什么是-JRE？-什么是-JVM？三者之间的联系与区别"><a href="#什么是-JDK？-什么是-JRE？-什么是-JVM？三者之间的联系与区别" class="headerlink" title="什么是 JDK？ 什么是 JRE？ 什么是 JVM？三者之间的联系与区别"></a>什么是 JDK？ 什么是 JRE？ 什么是 JVM？三者之间的联系与区别</h3><p>这几个是Java中很基本很基本的东西，但是我相信一定还有很多人搞不清楚！为什么呢？因为我们大多数时候在使用现成的编译工具以及环境的时候，并没有去考虑这些东西。</p>
+<p><strong>JDK：</strong>顾名思义它是给开发者提供的开发工具箱,是给程序开发者用的。它除了包括完整的JRE（Java Runtime Environment），Java运行环境，还包含了其他供开发者使用的工具包。</p>
+<p><strong>JRE：</strong> 普通用户而只需要安装JRE（Java Runtime Environment）来运行Java程序。而程序开发者必须安装JDK来编译、调试程序。</p>
+<p><strong>JVM：</strong> 当我们运行一个程序时，JVM负责将字节码转换为特定机器代码，JVM提供了内存管理/垃圾回收和安全机制等。这种独立于硬件和操作系统，正是java程序可以一次编写多处执行的原因。</p>
+<h4 id="区别与联系："><a href="#区别与联系：" class="headerlink" title="区别与联系："></a>区别与联系：</h4><p>1、JDK用于开发，JRE用于运行JAVA程序。<br>2、JDK和JRE中包含JVM。<br>3、JVM是Java编程语言的核心并且具有平台独立性。</p>
+<h3 id="什么是字节码？采用字节码的最大好处是什么？"><a href="#什么是字节码？采用字节码的最大好处是什么？" class="headerlink" title="什么是字节码？采用字节码的最大好处是什么？"></a>什么是字节码？采用字节码的最大好处是什么？</h3><p><strong>先看下Java中的编译器和解释器：</strong><br>Java中引入了虚拟机的概念，即在机器和编译程序之间加入了一层抽象的虚拟的机器。这台虚拟的机器在任何平台上都提供给编译程序一个共同的接口。编译程序只需要面向虚拟机，生成虚拟机能够理解的代码，然后由包解释器来将虚拟机代码转换为特定系统的机器码执行。在Java中，这种虚拟机理解的代码叫做 字节码 （即扩展名为 .class 的文件），它不面向任何特定的处理器，只面向虚拟机。每一种平台的解释器是不同的，但是实现的虚拟机是相同的。Java源程序经过编译器编译后变成字节码，字节码由虚拟机解释执行，虚拟机将每一条执行的字节码发送给解释器，解释器将其翻译成特定机器上的机器码，然后在特定的机器上运行。这也就解释了Java的编译与解释并存的特点。</p>
+<p>Java源代码 ——&gt; 编译器 ——&gt; Jvm可执行的Java字节码（即虚拟指令）——&gt; Jvm ——&gt; Jvm中解释器 ——&gt; 机器可执行的二进制机器码 ——&gt; 程序运行。</p>
+<p><strong>采用字节码的好处：</strong><br>Java语言通过字节码的方式，在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点。所以Java程序运行时比较高效，而且，由于字节码并不专对一种特定的机器，因此，Java程序无须重新编译便可在多种不同的计算机上运行。</p>
+<h3 id="Java-和-C-的区别？"><a href="#Java-和-C-的区别？" class="headerlink" title="Java 和 C++ 的区别？"></a>Java 和 C++ 的区别？</h3><p>我知道很多人没学过C++，但是面试官就是没事喜欢拿咱们Java和C++比呀！没办法！！！就算没学过C++，也要记下来！</p>
+<ul>
+<li>都是面向对象的语言，都支持封装、继承和多态</li>
+<li>Java不提供指针来直接访问内存，程序内存更加安全</li>
+<li>Java的类是单继承的，C++支持多重继承，虽然Java的类不可以多继承，但是接口可以多继承。</li>
+<li>Java有自动内存管理机制，不需要程序员手动释放无用内存</li>
+</ul>
+<h3 id="接口和抽象类的区别是什么？"><a href="#接口和抽象类的区别是什么？" class="headerlink" title="接口和抽象类的区别是什么？"></a>接口和抽象类的区别是什么？</h3><p>1、接口的方法默认是 public，所有方法在接口中不能有实现，抽象类可以有非抽象的方法<br>2、接口中的实例变量默认是 final 类型的， 而抽象类中则不定<br>3、一个类可以实现多个接口，但最多只能实现一个抽象类<br>4、一个类实现接口的话要实现接口的所有方法，而抽象类不一定<br>5、接口不能用 new 实例化，但可以声明，但是必须引用一个实现该接口的对象从设计层面来说，抽象是对类的抽象，是一种模板设计，接口是行为的抽象，是一种行为的规范<br><strong>注意：</strong>Java8 后接口可以有默认实现（default）。</p>
+<h3 id="成员变量与局部变量的区别有哪些？"><a href="#成员变量与局部变量的区别有哪些？" class="headerlink" title="成员变量与局部变量的区别有哪些？"></a>成员变量与局部变量的区别有哪些？</h3><p>1、从语法形式上，看成员变量是属于类的，而局部变量是在方法中定义的变量或是方法的参数；成员变量可以被 <code>public</code> ,<code>private</code>,<code>static</code> 等修饰符所修饰，而局部变量不能被访问控制修饰符及<code>static</code>所修饰；但是，成员变量和局部变量都能被<code>final</code>所修饰。<br>2、从变量在内存中的存储方式来看，成员变量是对象的一部分，而对象存在于堆内存，局部变量存在于栈内存。<br>3、从变量在内存中的生存时间上看，成员变量是对象的一部分，它随着对象的创建而存在，而局部变量随着方法的调用而自动消失。<br>4、成员变量如果没有被赋初值，则会自动以类型的默认值而赋值（一种情况例外被<code>final</code>修饰但没有被<code>static</code>修饰的成员变量必须显示地赋值），而局部变量则不会自动赋值。</p>
+<h3 id="重载和重写的区别？"><a href="#重载和重写的区别？" class="headerlink" title="重载和重写的区别？"></a>重载和重写的区别？</h3><p><strong>重载：</strong> 发生在同一个类中，方法名必须相同，参数类型不同、个数不同、顺序不同，方法返回值和访问修饰符可以不同，发生在编译时。 　　<br><strong>重写：</strong> 发生在父子类中，方法名、参数列表必须相同，返回值范围小于等于父类，抛出的异常范围小于等于父类，访问修饰符范围大于等于父类；如果父类方法访问修饰符为<code>private</code>则子类就不能重写该方法。</p>
+<h3 id="字符型常量和字符串常量的区别？"><a href="#字符型常量和字符串常量的区别？" class="headerlink" title="字符型常量和字符串常量的区别？"></a>字符型常量和字符串常量的区别？</h3><p><strong>形式上:</strong><br>字符常量是单引号引起的一个字符<br>字符串常量是双引号引起的若干个字符<br><strong>含义上:</strong><br>字符常量相当于一个整形值(ASCII值),可以参加表达式运算<br>字符串常量代表一个地址值(该字符串在内存中存放位置)<br><strong>占内存大小</strong><br>字符常量只占一个字节<br>字符串常量占若干个字节(至少一个字符结束标志)</p>
+    </div>
+  </div>
+  
+    <div class="copy-right">
+      <div class="markdown-body">
+        <blockquote>
+        
+        
+          本文作者 : KYRIECAO <br>
+        
+        原文链接 : <a href="">https://caozongpeng.github.io/2019/02/21/最最最常见的Java面试题总结-二/</a><br>
+        版权声明 : 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！
+        </blockquote>
+      </div>
+    </div>
+  
+  
+  
+    <div class="social-share" style="margin-top: -2rem" data-wechat-qrcode-title="<p>微信扫一扫</p>" data-wechat-qrcode-helper="<p>微信右上角, 扫一扫分享</p>" data-sites="qzone, qq, weibo, wechat, douban, google, facebook, twitter">
+  <span style="color: #6b7487; font-size: 1.4rem;">分享到: </span>
+</div>
+<script src="https://cdn.bootcss.com/social-share.js/1.0.16/js/social-share.min.js" async></script>
+  
+
+  
+    <div id="reward">
+  
+    <p id="reward-meta">知识 & 情怀 | 二者兼得</p>
+  
+  <button id="reward-btn">
+    
+    <span>投食</span>
+  </button>
+  <div id="reward-qrcode">
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/wechat.jpg" alt="微信扫一扫, 向我投食">
+        <p class="qrcode-meta">微信扫一扫, 向我投食</p>
+      </div>
+    
+      <div class="reward-qrcode--container">
+        <img class="qrcode-img" src="/images/alipay.jpg" alt="支付宝扫一扫, 向我投食">
+        <p class="qrcode-meta">支付宝扫一扫, 向我投食</p>
+      </div>
+    
+  </div>
+
+</div>
+
+<script>
+  (() => {
+    let button = document.querySelector('#reward-btn'),
+      qrcode = document.querySelector('#reward-qrcode'),
+      display = false;
+    
+    button.addEventListener('click', () => {
+      qrcode.style.display = display ? 'none' : 'block'
+      display = !display
+    }, false)
+  })()
+</script>
+  
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/JAVA/">
+              #JAVA
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+  <aside id="sidebar">
+    <p id="sidebar-header"></p>
+    <ol id="sidebar-toc"></ol>
+  </aside>
+  <script async>setTimeout(generateToc, 10);</script>
+
+
+  <nav class="post-navigation">
+    
+      <div class="nav-pre">
+        <i class="iconfont icon-prev"></i>
+        上一篇:
+        <a href="/2019/02/20/最最最常见的Java面试题总结-一/" target="_self">最最最常见的Java面试题总结(一)</a>
+      </div>
+    
+    
+  </nav>
+
+  
+    <a href="#comment" class="comment-anchor"></a>
+<div class="comment-title"><i class="iconfont icon-footprint"></i> 留下足迹 <i class="iconfont icon-footprint"></i></div>
+<div id="vcomments"></div>
+
+<script defer>
+  if( true ) {
+    let path = getRealPath()
+    new Valine({
+      el: "#vcomments",
+      appId: "Mf7CGzCge7nG4SidKEJA5l15-gzGzoHsz",
+      appKey: "GUOthCB7bTfztCk41bvbP4Pl",
+      notify: false,
+      verify: false,
+      avatar: "robohash",
+      placeholder: "正确填写邮箱, 才能及时收到回复哦♪(^∇^*)",
+      path
+    });
+  }
+</script>
+   
+
+  
+    <script defer>
+const valineAPI = (() => {
+  try {
+    AV.init("Mf7CGzCge7nG4SidKEJA5l15-gzGzoHsz", "GUOthCB7bTfztCk41bvbP4Pl");
+  } catch(error) {}
+  const isExist = (identity) => {
+    identity = identity || getRealPath();
+    let query = new AV.Query('Timer');
+    return new Promise((resolve, reject) => {
+      query.equalTo("identity", identity);
+      query.find().then(results => {
+        resolve(results.length > 0);
+      }, error => reject(error));
+    })
+  }
+
+  const _get = (identity) => {
+    let query = null;
+    if(identity && identity instanceof Array){
+      let querys = [];
+      for(let i = 0; i < identity.length; ++i) {
+        querys[i] = new AV.Query('Timer');
+        querys[i].equalTo('identity', identity[i]);
+      }
+      query = AV.Query.or.apply(null ,querys);
+    } else {
+      identity = identity || getRealPath();
+      query = new AV.Query("Timer");
+      query.equalTo("identity", identity);
+    }
+
+    return new Promise((resolve, reject) => {
+      query.find()
+      .then(results => resolve(results))
+      .catch(error => reject(error))
+    })
+  }
+
+  const create = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let Todo = AV.Object.extend('Timer');
+      let todo = new Todo();
+      todo.set("times", 1);
+      todo.set("identity", identity);
+      todo.save().then(res => resolve(true), error => reject(error));
+    })
+  }
+
+  const update = (identity) => {
+    identity = identity || getRealPath();
+    return new Promise((resolve, reject) => {
+      let query = new AV.Query('Timer');
+      query.equalTo("identity", identity);
+      query.find().then(todos => {
+        todos.forEach(todo => {
+          todo.set("times", todo.attributes.times + 1);
+        });
+        return AV.Object.saveAll(todos);
+      }).then(todos => resolve(true), error => reject(error));
+    })
+  }
+
+  return {
+    isExist,
+    _get,
+    update,
+    create
+  }
+})()
+
+const calcAndWriteTimes = () => {
+  let isPost = true;
+
+  let timerAllDOM = document.querySelectorAll(".article-timer");
+
+  if(isPost) {
+    let identity = timerAllDOM[0].getAttribute("data-identity");
+    valineAPI.isExist(identity)
+    .then(exist => {
+      if(exist) {
+        return valineAPI.update(identity);
+      }
+      return new Promise(resolve => resolve(true));
+    })
+    .then( succuess => valineAPI._get(identity))
+    .then( result => timerAllDOM[0].innerText = result[0].attributes.times)
+    .catch(error => console.log(error.message))
+    return ;
+  }
+
+  let timerDOMCache = {};
+
+  for(let timerDOM of timerAllDOM) {
+    let identity = timerDOM.getAttribute("data-identity");
+    if(timerDOMCache.hasOwnProperty(identity)){
+      timerDOMCache[identity].dom.push(timerDOM);
+    }else{
+      timerDOMCache[identity] = {
+        dom: [timerDOM],
+        times: undefined
+      };
+    }
+  }
+
+  let identities = Object.keys(timerDOMCache);
+  valineAPI._get(identities).then(results => {
+    for(let result of results) {
+      let {identity, times} = result.attributes;
+      timerDOMCache[identity].times = times;
+      timerDOMCache[identity].dom.map(item => item.innerText = times);
+    }
+    for(let identity of identities) {
+      if(timerDOMCache[identity].times){
+        continue;
+      }
+      timerDOMCache[identity].dom.map(item => item.innerText = 1);
+      valineAPI.create(identity);
+    }
+  }).catch(error => console.log(error.message))
+}
+
+if(true){
+  calcAndWriteTimes();
+}
+</script>
+   
+
+</div>
+
+
+      <footer>
+  <p class="site-info">
+    博客已萌萌哒运行<span id="time-to-now"></span><span class="my-face">(●'◡'●)ﾉ♥</span>
+    <br>
+    Theme - <a target="_blank" href="https://github.com/dongyuanxin/theme-bmw">BMW</a> | Made With 💗 | Powered by <a target="_blank" href="https://godbmw.com/">GodBMW</a>
+    <br>
+    
+    <!-- 新增 -->
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">
+        本站总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>&nbsp;次
+    </span>
+    <span id="busuanzi_container_site_uv">
+        总访客数&nbsp;<span id="busuanzi_value_site_uv"></span>&nbsp;人次
+    </span>
+  </p>
+</footer>
+
+
+
+<script>
+const timeToNowDOM = document.querySelector("#time-to-now");
+const startTimestamp = new Date(2019, 0, 23).getTime();
+
+const updateTimeStr = () => {
+  let offset = parseInt(
+      (new Date().getTime() - startTimestamp) / 1000,
+      10
+    ),
+    day = Math.floor(offset / 86400),
+    hour = Math.floor((offset % 86400) / 3600),
+    minute = Math.floor(((offset % 86400) % 3600) / 60),
+    second = Math.floor(((offset % 86400) % 3600) % 60);
+  timeToNowDOM.innerHTML =
+    day + "天" + hour + "小时" + minute + "分钟" + second + "秒";
+  setTimeout(updateTimeStr, 500);
+}
+
+setTimeout(updateTimeStr, 500);
+</script>
+
+
+      <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+
+    </div>
+
+    
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+    
+
+    <script src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script>
+<script async>
+  let fancyTimer = setInterval(function(){
+    if(!window.$){
+      return;
+    }
+    $(document).ready(function() {
+      $(".post img").each(function () {
+        if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+          return;
+        }
+        // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+        var element = document.createElement("a");
+        $(element).attr("data-fancybox", "gallery");
+        $(element).attr("href", $(this).attr("src"));
+        $(this).wrap(element);
+      });
+      
+      clearInterval(fancyTimer);
+    });
+  }, 10);
+</script>
+
+    
+  </body>
+
+</html>
